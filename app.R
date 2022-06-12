@@ -33,7 +33,8 @@ ui <- fluidPage(
                                            0, 1, 0.01),
                                numericInput(inputId = "binSize", 
                                             label = "Nr. of events",
-                                            value = 10),
+                                            value = 10,
+                                            min = 0),
                                h5("The binomial distribution with parameters n and p is the discrete probabilty distribution of the number of successes in a sequence of n independent experiments, each asking a yes-no question, and each with its own Boolean-valued outcome: success(with probability p) or failure(with probability q = 1 - p).",
                                   style = "text-align: justify")
                                
@@ -55,13 +56,16 @@ ui <- fluidPage(
                                condition = "input.repartitie == 'hgeo'",
                                numericInput(inputId = "hgeoSize", 
                                             label = "Size of population",
-                                            value = 10),
+                                            value = 10,
+                                            min = 0),
                                numericInput(inputId = "hgeoNrS", 
                                             label = "Nr. of samples drawn",
-                                            value = 1),
+                                            value = 1,
+                                            min = 0),
                                numericInput(inputId = "hgeoNrI", 
                                             label = "Nr. of items in population",
-                                            value = 1),
+                                            value = 1,
+                                            min = 0),
                                h5("The hypergeometric distribution is a discrete probability distribution that describes the probability of k successes(random draws for which the object drawn has a specified feature) in n draws, without replacement, from a finite population of size N that contains exactly K objects with that feature, wherein each draw is either a success or a failure. In contrast, the binomial distribution describes the probability of k successes in n draws with replacement.",
                                   style = "text-align: justify")
                                
@@ -101,7 +105,71 @@ ui <- fluidPage(
              
              ),
     tabPanel("Evenimente",
-             h3("COOL AND NICE AND GOOD WOW")
+             sidebarLayout(position = "left",
+                           sidebarPanel(
+                             radioButtons("tipEven",
+                                          "Alegeti tipul evenimentelor:",
+                                          c("Independente" = "indep",
+                                            "Incompatibile" = "incomp",
+                                            "Nu se cunoaste nimic" = "nimic")),
+                             numericInput("probA",
+                                          "P(A) = ",
+                                          value = 0,
+                                          min = 0,
+                                          max = 1,
+                                          step = 0.01),
+                             numericInput("probB",
+                                          "P(B) = ",
+                                          value = 0,
+                                          min = 0,
+                                          max = 1,
+                                          step = 0.01),
+                             numericInput("probAandB",
+                                          HTML("P(A&cap;B) = "),
+                                          value = 0,
+                                          min = 0,
+                                          max = 1,
+                                          step = 0.01)
+                           ),
+                           mainPanel(
+                             fluidRow(
+                               splitLayout(cellWidths = c("33.33%", "33.33%", "33.33%"),
+                                           column(
+                                             style='border: 1px solid black',
+                                             width = 11,
+                                             fluidRow(
+                                               splitLayout(cellWidths = c("50%", "50%"),
+                                                           h3(HTML("P(A&Union;B):"), style = "text-align: center"),
+                                                           h3(textOutput("probAuB"), style = "text-align: center")
+                                               )
+                                             )
+                                           ),
+                                           column(
+                                             style='border: 1px solid black',
+                                             width = 11,
+                                             fluidRow(
+                                               splitLayout(cellWidths = c("50%", "50%"),
+                                                           h3("P(A|B):", style = "text-align: center"),
+                                                           h3(textOutput("probAcB"), style = "text-align: center")
+                                               )
+                                             )
+                                           ),
+                                           column(
+                                             style='border: 1px solid black',
+                                             width = 11,
+                                             fluidRow(
+                                               splitLayout(cellWidths = c("50%", "50%"),
+                                                           h3("P(B|A):", style = "text-align: center"),
+                                                           h3(textOutput("probBcA"), style = "text-align: center")
+                                               )
+                                             )
+                                           )
+                                          )
+                             )
+                           )
+                          )
+             
+             
             )
   )
   
