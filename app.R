@@ -13,7 +13,11 @@ ui <- fluidPage(
                                          choices = c("Bernoulli" = "bern",
                                                      "Binomiala" = "bin",
                                                      "Geometrica" = "geo",
-                                                     "Hypergeometrica" = "hgeo")),
+                                                     "Hypergeometrica" = "hgeo",
+                                                     "Normala" = "norm",
+                                                     "Uniforma continua" = "cuni",
+                                                     "Poisson" = "poi",
+                                                     "Exponentiala" = "exp")),
                              conditionalPanel(
                                condition = "input.repartitie == 'bern'",
                                sliderInput(inputId = "bern", 
@@ -69,7 +73,67 @@ ui <- fluidPage(
                                h5("The hypergeometric distribution is a discrete probability distribution that describes the probability of k successes(random draws for which the object drawn has a specified feature) in n draws, without replacement, from a finite population of size N that contains exactly K objects with that feature, wherein each draw is either a success or a failure. In contrast, the binomial distribution describes the probability of k successes in n draws with replacement.",
                                   style = "text-align: justify")
                                
+                             ),
+                             conditionalPanel(
+                               condition = "input.repartitie == 'poi'",
+                               numericInput(inputId = "events",
+                                            label = "Nr. of successful events",
+                                            value = 10),
+                               numericInput(inputId = "mean1",
+                                            label = "Mean",
+                                            value = 10),
+                               h5("The Poisson distribution is a discrete probability distribution that expresses
+                         the probability of a given number of events occurring in a fixed interval of time
+                         or space if these events occur with a known constant mean rate and independently
+                         of the time since the last event.", style = "text-align: justify")
+                             ),
+                             conditionalPanel(
+                               condition = "input.repartitie == 'norm'",
+                               numericInput(inputId = "quantiles1",
+                                            label = "Vector of quantiles",
+                                            value = 10),
+                               numericInput(inputId = "mean2",
+                                            label = "Mean",
+                                            value = 10),
+                               numericInput(inputId = "deviation",
+                                            label = "Standard deviation",
+                                            value = 1),
+                               h5("A normal distribution (also known as Gaussian, Gauss, or Laplace-Gauss distribution) is a type of continuous probability distribution for a real-valued random variable.",
+                                  style = "text-align: justify")
+                             ),
+                             conditionalPanel(
+                               condition = "input.repartitie == 'cuni'",
+                               numericInput(inputId = "quantiles2",
+                                            label = "Vector of quantiles",
+                                            value = 10),
+                               numericInput(inputId = "min2",
+                                            label = "Minimum value of the distribution",
+                                            value = 3),
+                               numericInput(inputId = "max2",
+                                            label = "Maximum value of the distribution",
+                                            value = 8),
+                               h5("The continuous uniform distribution or rectangular distribution is a family of
+                         symmetric probability distributions. The distribution describes an experiment
+                         where there is an arbitrary outcome that lies between certain bounds.The
+                         bounds are defined by the parameters, a and b, which are the minimum and maximum
+                         values.", style = "text-align: justify")
+                             ),
+                             conditionalPanel(
+                               condition = "input.repartitie == 'exp'",
+                               numericInput(inputId = "quantiles3",
+                                            label = "Vector of quantiles",
+                                            value = 10),
+                               numericInput(inputId = "rate",
+                                            label = "Rate",
+                                            value = 0.5,
+                                            step = 0.5),
+                               h5("The exponential distribution is the probability distribution of the time between
+                         events in a Poisson point process, i.e., a process in which events occur continuously
+                         and independently at a constant average rate. It is a particular case of the gamma
+                         distribution. It is the continuous analogue of the geometric distribution, and it has
+                         the key property of being memoryless.", style = "text-align: justify")
                              )
+                             
                            ),
                            mainPanel(
                              fluidRow(
@@ -103,7 +167,7 @@ ui <- fluidPage(
                              )
                            ))
              
-             ),
+    ),
     tabPanel("Evenimente",
              sidebarLayout(position = "left",
                            sidebarPanel(
@@ -164,13 +228,13 @@ ui <- fluidPage(
                                                )
                                              )
                                            )
-                                          )
+                               )
                              )
                            )
-                          )
+             )
              
              
-            )
+    )
   )
   
   
@@ -186,67 +250,132 @@ server <- function(input, output) {
       density <- dbern(x, prob);
     }
     
-    if (input$repartitie == "bin")
+    else if (input$repartitie == "bin")
     {
       prob <- input$binProb;
       size <- input$binSize;
       density <- dbinom(0:size, size, prob);
     }
     
-    if(input$repartitie == "geo") {
+    else if(input$repartitie == "geo") {
       x <- seq(0, 10);
       prob <- input$geoProb
       density <- dgeom(x, prob);
     }
     
-    if (input$repartitie == "hgeo") {
+    else if (input$repartitie == "hgeo") {
       size <- input$hgeoSize;
       nrS <- input$hgeoNrS;
       nrI <- input$hgeoNrI;
       density <- dhyper(0:nrI, size, nrS, nrI);
     }
     
-    plot(density, type = "o");
+    else if(input$repartitie == "norm"){
+      x <- input$quantiles1
+      mean <- input$mean2
+      sd <- input$deviation
+      density <- dnorm(1:x, mean, sd)
+    }
+    
+    else if(input$repartitie == "cuni"){
+      x <- input$quantiles2
+      min <- input$min2
+      max <- input$max2
+      density <- dunif(1:x,min,max);
+    }
+    
+    else if(input$repartitie == "poi"){
+      k <- input$events;
+      lambda <- input$mean1;
+      density <- dpois(1:k, lambda);
+    }
+    
+    else{
+      x <- input$quantiles3
+      rate <- input$rate
+      density <- dexp(1:x, rate);
+    }
+    
+    if(input$repartitie == "duni")
+    {plot(density);}
+    else 
+    {plot(density, type = "o");}
   });
-    output$distGraph <- renderPlot({
-      if (input$repartitie == "bern")
-      {
-        prob <- input$bern
-        x <- seq(0, 3);
-        distribution <- pbern(x, prob);
-      }
-      if (input$repartitie == "bin")
-      {
-        prob <- input$binProb;
-        size <- input$binSize;
-        distribution <- pbinom(0:size, size, prob);
-      }
-      if (input$repartitie == "geo") {
-        prob <- input$geoProb
-        x <- seq(0, 10);
-        distribution <- pgeom(x, prob);
-      }
-      if (input$repartitie == "hgeo") {
-        size <- input$hgeoSize;
-        nrS <- input$hgeoNrS;
-        nrI <- input$hgeoNrI;
-        distribution <- phyper(0:nrI, size, nrS, nrI);
-      }
-      plot(distribution, type = "o");
-    });
-    output$mean <- renderText({
-      if (input$repartitie == "bern") { input$bern }
-      else if (input$repartitie == "bin") { input$binProb * input$binSize }
-      else if (input$repartitie == "geo") {(1 - input$geoProb) / input$geoProb}
-      else if (input$repartitie == "hgeo") {input$hgeoNrS * input$hgeoNrI / input$hgeoSize}
-    });
-    output$var <- renderText({
-      if (input$repartitie == "bern") { input$bern * (1 - input$bern) }
-      else if (input$repartitie == "bin") { input$binProb * input$binSize * (1 - input$binProb) }
-      else if (input$repartitie == "geo") {(1 - input$geoProb) / input$geoProb ** 2}
-      else if (input$repartitie == "hgeo") {(input$hgeoNrS * input$hgeoNrI / input$hgeoSize) * ((input$hgeoSize - input$hgeoNrI) / input$hgeoSize) * ((input$hgeoSize - input$hgeoNrS) / (input$hgeoSize - 1))  }
-    });
-
+  
+  
+  output$distGraph <- renderPlot({
+    if (input$repartitie == "bern")
+    {
+      prob <- input$bern
+      x <- seq(0, 3);
+      distribution <- pbern(x, prob);
+    }
+    else if (input$repartitie == "bin")
+    {
+      prob <- input$binProb;
+      size <- input$binSize;
+      distribution <- pbinom(0:size, size, prob);
+    }
+    else if (input$repartitie == "geo") {
+      prob <- input$geoProb
+      x <- seq(0, 10);
+      distribution <- pgeom(x, prob);
+    }
+    else if (input$repartitie == "hgeo") {
+      size <- input$hgeoSize;
+      nrS <- input$hgeoNrS;
+      nrI <- input$hgeoNrI;
+      distribution <- phyper(0:nrI, size, nrS, nrI);
+    }
+    else if(input$repartitie == "norm"){
+      x <- input$quantiles1
+      mean <- input$mean2
+      sd <- input$deviation
+      distribution <- pnorm(1:x, mean, sd)
+    }
+    else if (input$repartitie == "cuni") {
+      q <- input$quantiles2
+      min <- input$min2
+      max <- input$max2
+      distribution <- punif(1:q, min, max);
+    }
+    else if (input$repartitie == "poi"){
+      q <- input$events;
+      lambda <- input$mean1;
+      distribution <- ppois(1:q,lambda);
+    }
+    else {
+      x <- input$quantiles3
+      rate <- input$rate
+      distribution <- pexp(1:x, rate)
+    }
+    
+    if(input$repartitie == "duni")
+    {plot(distribution);}
+    else
+    {plot(distribution, type = "o");}
+  });
+  output$mean <- renderText({
+    if (input$repartitie == "bern") { input$bern }
+    else if (input$repartitie == "bin") { input$binProb * input$binSize }
+    else if (input$repartitie == "geo") {(1 - input$geoProb) / input$geoProb}
+    else if (input$repartitie == "hgeo") {input$hgeoNrS * input$hgeoNrI / input$hgeoSize}
+    else if (input$repartitie == "norm") {input$mean2}
+    else if (input$repartitie == "cuni") { (input$min + input$max) / 2}
+    else if (input$repartitie == "poi") { input$mean1 }
+    else {1 / input$rate}
+  });
+  output$var <- renderText({
+    if (input$repartitie == "bern") { input$bern * (1 - input$bern) }
+    else if (input$repartitie == "bin") { input$binProb * input$binSize * (1 - input$binProb) }
+    else if (input$repartitie == "geo") {(1 - input$geoProb) / input$geoProb ** 2}
+    else if (input$repartitie == "hgeo") {(input$hgeoNrS * input$hgeoNrI / input$hgeoSize) * ((input$hgeoSize - input$hgeoNrI) / input$hgeoSize) * ((input$hgeoSize - input$hgeoNrS) / (input$hgeoSize - 1))  }
+    else if (input$repartitie == "norm") {input$deviation ** 2}
+    else if (input$repartitie == "cuni") {((input$max - input$min) ** 2) / 12}
+    else if (input$repartitie == "poi") { input$mean1 }
+    else {1 / (input$rate ** 2)}
+  });
+  
 }
 
 # Run the application 
