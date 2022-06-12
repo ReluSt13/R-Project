@@ -4,98 +4,107 @@ library(Rlab)
 
 if(interactive()){
 ui <- fluidPage(
-  sidebarLayout(position = "left", 
-                sidebarPanel(
-                         selectInput(inputId = "repartitie",
-                                     label = "Alegeti o repartitie: ",
-                                     choices = c("Bernoulli" = "bern",
-                                                 "Binomiala" = "bin",
-                                                 "Geometrica" = "geo",
-                                                 "Hypergeometrica" = "hgeo")),
-                         conditionalPanel(
-                           condition = "input.repartitie == 'bern'",
-                           sliderInput(inputId = "bern", 
-                                       label = "Probability of success",
-                                       0, 1, 0.01),
-                           h5("The Bernoulli distribution is the discrete probability distribution
+  navbarPage("Navbar :)",
+    tabPanel("Repartitii",
+             sidebarLayout(position = "left", 
+                           sidebarPanel(
+                             selectInput(inputId = "repartitie",
+                                         label = "Alegeti o repartitie: ",
+                                         choices = c("Bernoulli" = "bern",
+                                                     "Binomiala" = "bin",
+                                                     "Geometrica" = "geo",
+                                                     "Hypergeometrica" = "hgeo")),
+                             conditionalPanel(
+                               condition = "input.repartitie == 'bern'",
+                               sliderInput(inputId = "bern", 
+                                           label = "Probability of success",
+                                           0, 1, 0.01),
+                               h5("The Bernoulli distribution is the discrete probability distribution
                               of a random variable which takes the value 1 with probability
                               p and the value 0 with probability q = 1 - p.The Bernoulli distribution
                               is a special case of the binomial distribution where a single trial is
                               conducted (so n would be 1 for such a binomial distribution).", style = "text-align: justify")
-                  
-                         ),
-                         conditionalPanel(
-                           condition = "input.repartitie == 'bin'",
-                           sliderInput(inputId = "binProb", 
-                                       label = "Probability of success",
-                                       0, 1, 0.01),
-                           numericInput(inputId = "binSize", 
-                                        label = "Nr. of events",
-                                        value = 10),
-                           h5("The binomial distribution with parameters n and p is the discrete probabilty distribution of the number of successes in a sequence of n independent experiments, each asking a yes-no question, and each with its own Boolean-valued outcome: success(with probability p) or failure(with probability q = 1 - p).",
-                              style = "text-align: justify")
-                           
-                         ),
-                         conditionalPanel(
-                           condition = "input.repartitie == 'geo'",
-                           sliderInput(inputId = "geoProb", 
-                                       label = "Probability of success",
-                                       0, 1, 0.01),
-                           h5("The geometric distribution is either one of two discrete probability distributions:",
-                              style = "text-align: justify; font-weight: bold;"),
-                           h5("    The probability distribution of the number X of Bernoulli trials needed to get one success, supported on the set {1,2,3,...}",
-                              style = "text-align: justify"),
-                           h5("The probability distribution of the number Y = X - 1 of failures before the first success, supported on the set {0,1,2,...}",
-                              style = "text-align: justify")
-                           
-                         ),
-                         conditionalPanel(
-                           condition = "input.repartitie == 'hgeo'",
-                           numericInput(inputId = "hgeoSize", 
-                                        label = "Size of population",
-                                        value = 10),
-                           numericInput(inputId = "hgeoNrS", 
-                                        label = "Nr. of samples drawn",
-                                        value = 1),
-                           numericInput(inputId = "hgeoNrI", 
-                                        label = "Nr. of items in population",
-                                        value = 1),
-                           h5("The hypergeometric distribution is a discrete probability distribution that describes the probability of k successes(random draws for which the object drawn has a specified feature) in n draws, without replacement, from a finite population of size N that contains exactly K objects with that feature, wherein each draw is either a success or a failure. In contrast, the binomial distribution describes the probability of k successes in n draws with replacement.",
-                              style = "text-align: justify")
-                           
-                         )
-                ),
-                mainPanel(
-                  fluidRow(
-                    splitLayout(cellWidths = c("50%", "50%"),
-                                plotOutput("densityGraph"),
-                                plotOutput("distGraph"))
-                  ),
-                  fluidRow(
-                    splitLayout(cellWidths = c("50%", "50%"),
-                                column(style='border: 1px solid black',
-                                       width = 11,
-                                       fluidRow(
-                                         splitLayout(cellWidths = c("50%", "50%"),
-                                                     h3("Mean:", style = "text-align: center"),
-                                                     h3(textOutput("mean"), style = "text-align: center")
-                                                     )
-                                       )
-                                       
-                                ),
-                                column(
-                                  style='border: 1px solid black',
-                                  width = 11,
-                                  fluidRow(
-                                    splitLayout(cellWidths = c("50%", "50%"),
-                                                h3("Variance:", style = "text-align: center"),
-                                                h3(textOutput("var"), style = "text-align: center")
-                                    )
-                                  )
-                                )
-                              )
-                  )
-                ))
+                               
+                             ),
+                             conditionalPanel(
+                               condition = "input.repartitie == 'bin'",
+                               sliderInput(inputId = "binProb", 
+                                           label = "Probability of success",
+                                           0, 1, 0.01),
+                               numericInput(inputId = "binSize", 
+                                            label = "Nr. of events",
+                                            value = 10),
+                               h5("The binomial distribution with parameters n and p is the discrete probabilty distribution of the number of successes in a sequence of n independent experiments, each asking a yes-no question, and each with its own Boolean-valued outcome: success(with probability p) or failure(with probability q = 1 - p).",
+                                  style = "text-align: justify")
+                               
+                             ),
+                             conditionalPanel(
+                               condition = "input.repartitie == 'geo'",
+                               sliderInput(inputId = "geoProb", 
+                                           label = "Probability of success",
+                                           0, 1, 0.01),
+                               h5("The geometric distribution is either one of two discrete probability distributions:",
+                                  style = "text-align: justify; font-weight: bold;"),
+                               h5("    The probability distribution of the number X of Bernoulli trials needed to get one success, supported on the set {1,2,3,...}",
+                                  style = "text-align: justify"),
+                               h5("The probability distribution of the number Y = X - 1 of failures before the first success, supported on the set {0,1,2,...}",
+                                  style = "text-align: justify")
+                               
+                             ),
+                             conditionalPanel(
+                               condition = "input.repartitie == 'hgeo'",
+                               numericInput(inputId = "hgeoSize", 
+                                            label = "Size of population",
+                                            value = 10),
+                               numericInput(inputId = "hgeoNrS", 
+                                            label = "Nr. of samples drawn",
+                                            value = 1),
+                               numericInput(inputId = "hgeoNrI", 
+                                            label = "Nr. of items in population",
+                                            value = 1),
+                               h5("The hypergeometric distribution is a discrete probability distribution that describes the probability of k successes(random draws for which the object drawn has a specified feature) in n draws, without replacement, from a finite population of size N that contains exactly K objects with that feature, wherein each draw is either a success or a failure. In contrast, the binomial distribution describes the probability of k successes in n draws with replacement.",
+                                  style = "text-align: justify")
+                               
+                             )
+                           ),
+                           mainPanel(
+                             fluidRow(
+                               splitLayout(cellWidths = c("50%", "50%"),
+                                           plotOutput("densityGraph"),
+                                           plotOutput("distGraph"))
+                             ),
+                             fluidRow(
+                               splitLayout(cellWidths = c("50%", "50%"),
+                                           column(style='border: 1px solid black',
+                                                  width = 11,
+                                                  fluidRow(
+                                                    splitLayout(cellWidths = c("50%", "50%"),
+                                                                h3("Mean:", style = "text-align: center"),
+                                                                h3(textOutput("mean"), style = "text-align: center")
+                                                    )
+                                                  )
+                                                  
+                                           ),
+                                           column(
+                                             style='border: 1px solid black',
+                                             width = 11,
+                                             fluidRow(
+                                               splitLayout(cellWidths = c("50%", "50%"),
+                                                           h3("Variance:", style = "text-align: center"),
+                                                           h3(textOutput("var"), style = "text-align: center")
+                                               )
+                                             )
+                                           )
+                               )
+                             )
+                           ))
+             
+             ),
+    tabPanel("Evenimente",
+             h3("COOL AND NICE AND GOOD WOW")
+            )
+  )
+  
   
 )
 
