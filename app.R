@@ -178,17 +178,17 @@ ui <- fluidPage(
                                             "Nu se cunoaste nimic" = "nimic")),
                              sliderInput("probA",
                                           "P(A) = ",
-                                          value = 0,
+                                          value = 0.1,
                                           min = 0,
                                           max = 1,
                                           step = 0.01),
                              sliderInput("probB",
                                           "P(B) = ",
-                                          value = 0,
+                                          value = 0.1,
                                           min = 0,
                                           max = 1,
                                           step = 0.01),
-                             conditionalPanel(condition = "input.tipEven == indep",
+                             conditionalPanel(condition = "input.tipEven == 'indep'",
                                               fluidRow(
                                                 splitLayout(cellWidths = c("65%", "35%"),
                                                             h4(HTML("P(A&cap;B) = P(A) * P(B) = "), style = "text-align: center; float: right"),
@@ -196,6 +196,23 @@ ui <- fluidPage(
                                                            )
                                               )
                                                   
+                             ),
+                             conditionalPanel(condition = "input.tipEven == 'incomp'",
+                                              sliderInput("probAiBIncomp",
+                                                          HTML("P(A&cap;B) = "),
+                                                          value = 0.1,
+                                                          min = 0,
+                                                          max = 1 
+                                              )
+                             ),
+                             conditionalPanel(condition = "input.tipEven == 'nimic'",
+                                              sliderInput("probAiBIncomp",
+                                                          HTML("P(A&cap;B) = "),
+                                                          value = 0.1,
+                                                          min = 0,
+                                                          max = 1
+                                              )
+      
                              )
                              #sliderInput("probAandB",
                               #            HTML("P(A&cap;B) = "),
@@ -391,13 +408,20 @@ server <- function(input, output) {
     }
   });
   output$probAiBIndep <- renderText({
-    input$probA * input$probB
+    if(input$tipEven == "indep") {
+      input$probA * input$probB
+    }
   })
   output$probAcB <- renderText({
-    (input$probA * input$probB) / input$probB
+    if(input$tipEven == "indep") {
+      (input$probA * input$probB) / input$probB
+    }
+    
   })
   output$probBcA <- renderText({
-    (input$probA * input$probB) / input$probA
+    if(input$tipEven == "indep") {
+      (input$probA * input$probB) / input$probA
+    }
   })
 }
 
