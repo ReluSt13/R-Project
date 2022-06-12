@@ -1,5 +1,6 @@
 
 library(shiny)
+library(Rlab)
 
 if(interactive()){
 ui <- fluidPage(
@@ -9,7 +10,8 @@ ui <- fluidPage(
                                      label = "Alegeti o repartitie: ",
                                      choices = c("Bernoulli" = "bern",
                                                  "Binomiala" = "bin",
-                                                 "Geometrica" = "geo")),
+                                                 "Geometrica" = "geo",
+                                                 "Hypergeometrica" = "hgeo")),
                          conditionalPanel(
                            condition = "input.repartitie == 'bern'",
                            sliderInput(inputId = "bern", 
@@ -44,6 +46,21 @@ ui <- fluidPage(
                            h5("    The probability distribution of the number X of Bernoulli trials needed to get one success, supported on the set {1,2,3,...}",
                               style = "text-align: justify"),
                            h5("The probability distribution of the number Y = X - 1 of failures before the first success, supported on the set {0,1,2,...}",
+                              style = "text-align: justify")
+                           
+                         ),
+                         conditionalPanel(
+                           condition = "input.repartitie == 'hgeo'",
+                           numericInput(inputId = "hgeoSize", 
+                                        label = "Size of population",
+                                        value = 10),
+                           numericInput(inputId = "hgeoNrS", 
+                                        label = "Nr. of samples drawn",
+                                        value = 1),
+                           numericInput(inputId = "hgeoNrI", 
+                                        label = "Nr. of items in population",
+                                        value = 1),
+                           h5("The hypergeometric distribution is a discrete probability distribution that describes the probability of k successes(random draws for which the object drawn has a specified feature) in n draws, without replacement, from a finite population of size N that contains exactly K objects with that feature, wherein each draw is either a success or a failure. In contrast, the binomial distribution describes the probability of k successes in n draws with replacement.",
                               style = "text-align: justify")
                            
                          )
@@ -105,6 +122,13 @@ server <- function(input, output) {
       density <- dgeom(x, prob);
     }
     
+    if (input$repartitie == "hgeo") {
+      size <- input$hgeoSize;
+      nrS <- input$hgeoNrS;
+      nrI <- input$hgeoNrI;
+      density <- dhyper(0:nrI, size, nrS, nrI);
+    }
+    
     plot(density, type = "o");
   });
     output$distGraph <- renderPlot({
@@ -125,17 +149,25 @@ server <- function(input, output) {
         x <- seq(0, 10);
         distribution <- pgeom(x, prob);
       }
+      if (input$repartitie == "hgeo") {
+        size <- input$hgeoSize;
+        nrS <- input$hgeoNrS;
+        nrI <- input$hgeoNrI;
+        distribution <- phyper(0:nrI, size, nrS, nrI);
+      }
       plot(distribution, type = "o");
     });
     output$mean <- renderText({
       if (input$repartitie == "bern") { input$bern }
       else if (input$repartitie == "bin") { input$binProb * input$binSize }
       else if (input$repartitie == "geo") {(1 - input$geoProb) / input$geoProb}
+      else if (input$repartitie == "hgeo") {input$hgeoNrS * input$hgeoNrI / input$hgeoSize}
     });
     output$var <- renderText({
       if (input$repartitie == "bern") { input$bern * (1 - input$bern) }
       else if (input$repartitie == "bin") { input$binProb * input$binSize * (1 - input$binProb) }
       else if (input$repartitie == "geo") {(1 - input$geoProb) / input$geoProb ** 2}
+      else if (input$repartitie == "hgeo") {(input$hgeoNrS * input$hgeoNrI / input$hgeoSize) * ((input$hgeoSize - input$hgeoNrI) / input$hgeoSize) * ((input$hgeoSize - input$hgeoNrS) / (input$hgeoSize - 1))  }
     });
 
 }
