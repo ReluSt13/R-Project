@@ -176,24 +176,33 @@ ui <- fluidPage(
                                           c("Independente" = "indep",
                                             "Incompatibile" = "incomp",
                                             "Nu se cunoaste nimic" = "nimic")),
-                             numericInput("probA",
+                             sliderInput("probA",
                                           "P(A) = ",
                                           value = 0,
                                           min = 0,
                                           max = 1,
                                           step = 0.01),
-                             numericInput("probB",
+                             sliderInput("probB",
                                           "P(B) = ",
                                           value = 0,
                                           min = 0,
                                           max = 1,
                                           step = 0.01),
-                             numericInput("probAandB",
-                                          HTML("P(A&cap;B) = "),
-                                          value = 0,
-                                          min = 0,
-                                          max = 1,
-                                          step = 0.01)
+                             conditionalPanel(condition = "input.tipEven == indep",
+                                              fluidRow(
+                                                splitLayout(cellWidths = c("65%", "35%"),
+                                                            h4(HTML("P(A&cap;B) = P(A) * P(B) = "), style = "text-align: center; float: right"),
+                                                            h4(textOutput("probAiBIndep"), style = "text-align: center; float: left") 
+                                                           )
+                                              )
+                                                  
+                             )
+                             #sliderInput("probAandB",
+                              #            HTML("P(A&cap;B) = "),
+                               #           value = 0,
+                                #          min = 0,
+                                 #         max = 1,
+                                  #        step = 0.01)
                            ),
                            mainPanel(
                              fluidRow(
@@ -376,6 +385,20 @@ server <- function(input, output) {
     else {1 / (input$rate ** 2)}
   });
   
+  output$probAuB <- renderText({
+    if(input$tipEven == "indep") {
+      input$probA + input$probB - (input$probA * input$probB)
+    }
+  });
+  output$probAiBIndep <- renderText({
+    input$probA * input$probB
+  })
+  output$probAcB <- renderText({
+    (input$probA * input$probB) / input$probB
+  })
+  output$probBcA <- renderText({
+    (input$probA * input$probB) / input$probA
+  })
 }
 
 # Run the application 
