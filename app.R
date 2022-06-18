@@ -4,7 +4,7 @@ library(Rlab)
 
 if(interactive()){
 ui <- fluidPage(
-  navbarPage("Navbar :)",
+  navbarPage("RV Project",
     tabPanel("Repartitii",
              sidebarLayout(position = "left", 
                            sidebarPanel(
@@ -257,7 +257,112 @@ ui <- fluidPage(
              )
              
              
-    )
+    ),
+    tabPanel("Var. Aleatoare",
+             sidebarLayout(position = "left",
+                           sidebarPanel(
+                             h3("V.A. 1:", style = "margin: 0px; margin-bottom: 5px"),
+                             fluidRow(
+                                     div(style = "display: inline-block; margin-left: 40px",
+                                                numericInput("va1v1",
+                                                             "Val 1: ",
+                                                             value = 0,
+                                                             width = "75px")
+                                     ),
+                                     div(style = "display: inline-block; margin-left: 40px",
+                                         numericInput("va1v2",
+                                                      "Val 2: ",
+                                                      value = 0,
+                                                      width = "75px")
+                                     ),
+                                     div(style = "display: inline-block; margin-left: 40px",
+                                         numericInput("va1v3",
+                                                      "Val 3: ",
+                                                      value = 0,
+                                                      width = "75px")
+                                     )
+                            ),
+                            fluidRow(
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va1p1",
+                                               "Prob 1: ",
+                                               value = 0,
+                                               width = "75px")
+                              ),
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va1p2",
+                                               "Prob 2: ",
+                                               value = 0,
+                                               width = "75px")
+                              ),
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va1p3",
+                                               "Prob 3: ",
+                                               value = 0,
+                                               width = "75px")
+                              )
+                            ),
+                            fluidRow(
+                              column(12, align = "center",
+                                     radioButtons("operatie",
+                                                  "Alegeti operatia dorita:",
+                                                  c("+" = "add",
+                                                    "-" = "sub",
+                                                    "*" = "mul",
+                                                    "/" = "div"),
+                                                  inline = TRUE
+                                     )
+                              )
+                            ),
+                            h3("V.A. 2:", style = "margin: 0px; margin-bottom: 5px"),
+                            fluidRow(
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va2v1",
+                                               "Val 1: ",
+                                               value = 0,
+                                               width = "75px")
+                              ),
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va2v2",
+                                               "Val 2: ",
+                                               value = 0,
+                                               width = "75px")
+                              ),
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va2v3",
+                                               "Val 3: ",
+                                               value = 0,
+                                               width = "75px")
+                              )
+                            ),
+                            fluidRow(
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va2p1",
+                                               "Prob 1: ",
+                                               value = 0,
+                                               width = "75px")
+                              ),
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va2p2",
+                                               "Prob 2: ",
+                                               value = 0,
+                                               width = "75px")
+                              ),
+                              div(style = "display: inline-block; margin-left: 40px",
+                                  numericInput("va2p3",
+                                               "Prob 3: ",
+                                               value = 0,
+                                               width = "75px")
+                              )
+                            )
+                             
+
+                           ),
+                           mainPanel(
+                             h3("ceva")
+                           )
+                          )
+            )
   )
   
   
@@ -384,7 +489,7 @@ server <- function(input, output) {
     else if (input$repartitie == "geo") {(1 - input$geoProb) / input$geoProb}
     else if (input$repartitie == "hgeo") {input$hgeoNrS * input$hgeoNrI / input$hgeoSize}
     else if (input$repartitie == "norm") {input$mean2}
-    else if (input$repartitie == "cuni") { (input$min + input$max) / 2}
+    else if (input$repartitie == "cuni") { (input$min2 + input$max2) / 2}
     else if (input$repartitie == "poi") { input$mean1 }
     else {1 / input$rate}
   });
@@ -394,7 +499,7 @@ server <- function(input, output) {
     else if (input$repartitie == "geo") {(1 - input$geoProb) / input$geoProb ** 2}
     else if (input$repartitie == "hgeo") {(input$hgeoNrS * input$hgeoNrI / input$hgeoSize) * ((input$hgeoSize - input$hgeoNrI) / input$hgeoSize) * ((input$hgeoSize - input$hgeoNrS) / (input$hgeoSize - 1))  }
     else if (input$repartitie == "norm") {input$deviation ** 2}
-    else if (input$repartitie == "cuni") {((input$max - input$min) ** 2) / 12}
+    else if (input$repartitie == "cuni") {((input$max2 - input$min2) ** 2) / 12}
     else if (input$repartitie == "poi") { input$mean1 }
     else {1 / (input$rate ** 2)}
   });
