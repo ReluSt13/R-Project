@@ -1,6 +1,7 @@
 
 library(shiny)
 library(Rlab)
+library(discreteRV)
 
 if(interactive()){
 ui <- fluidPage(
@@ -287,18 +288,24 @@ ui <- fluidPage(
                                   numericInput("va1p1",
                                                "Prob 1: ",
                                                value = 0,
+                                               min = 0,
+                                               step = 0.1,
                                                width = "75px")
                               ),
                               div(style = "display: inline-block; margin-left: 40px",
                                   numericInput("va1p2",
                                                "Prob 2: ",
                                                value = 0,
+                                               min = 0,
+                                               step = 0.1,
                                                width = "75px")
                               ),
                               div(style = "display: inline-block; margin-left: 40px",
                                   numericInput("va1p3",
                                                "Prob 3: ",
                                                value = 0,
+                                               min = 0,
+                                               step = 0.1,
                                                width = "75px")
                               )
                             ),
@@ -340,18 +347,24 @@ ui <- fluidPage(
                                   numericInput("va2p1",
                                                "Prob 1: ",
                                                value = 0,
+                                               min = 0,
+                                               step = 0.1,
                                                width = "75px")
                               ),
                               div(style = "display: inline-block; margin-left: 40px",
                                   numericInput("va2p2",
                                                "Prob 2: ",
                                                value = 0,
+                                               min = 0,
+                                               step = 0.1,
                                                width = "75px")
                               ),
                               div(style = "display: inline-block; margin-left: 40px",
                                   numericInput("va2p3",
                                                "Prob 3: ",
                                                value = 0,
+                                               min = 0,
+                                               step = 0.1,
                                                width = "75px")
                               )
                             )
@@ -359,7 +372,19 @@ ui <- fluidPage(
 
                            ),
                            mainPanel(
-                             h3("ceva")
+                             fluidRow(
+                               splitLayout(cellWidths = c("45%", "10%", "45%"),
+                                           h3("V.A. 1", style = "float: right"),
+                                           h3(textOutput("renderOp"), style = "text-align: center"),
+                                           h3("V.A. 2 = ")
+                                          )
+                             ),
+                             fluidRow(
+                               column(12, align = "center", 
+                                      h3(htmlOutput("outputVA"))
+                                      )
+                             )
+                             
                            )
                           )
             )
@@ -552,6 +577,71 @@ server <- function(input, output) {
         "Error"
       }
     }
+  })
+  output$outputVA <- renderUI({
+    #probs
+    va1p1 <- input$va1p1;
+    va1p2 <- input$va1p2;
+    va1p3 <- input$va1p3;
+    va2p1 <- input$va2p1;
+    va2p2 <- input$va2p2;
+    va2p3 <- input$va2p3;
+    #vals
+    va1v1 <- input$va1v1;
+    va1v2 <- input$va1v2;
+    va1v3 <- input$va1v3;
+    va2v1 <- input$va2v1;
+    va2v2 <- input$va2v2;
+    va2v3 <- input$va2v3;
+    #operatie
+    op <- input$operatie;
+    #rv's
+    rv1 <- RV(c(va1v1, va1v2, va1v3), c(va1p1, va1p2, va1p3));
+    rv2 <- RV(c(va2v1, va2v2, va2v3), c(va2p1, va2p2, va2p3));
+    if((va1p1 + va1p2 + va1p3 != 1) | (va2p1 + va2p2 + va2p3 != 1)) {"Suma probabilitatilor trebuie sa fie = 1 pentru fiecare v.a."}
+    else {
+      if(op == "add") {
+        rvAdd <- rv1 + rv2;
+        HTML(paste(paste(outcomes(rvAdd), collapse = " || "), paste(probs(rvAdd), collapse = " "), sep = "<br/>"))
+      }
+      else if(op == "sub") {
+        rvSub <- rv1 - rv2;
+        HTML(paste(paste(outcomes(rvSub), collapse = " || "), paste(probs(rvSub), collapse = " "), sep = "<br/>"))
+      }
+      else if(op == "mul") {
+        
+        product.matrix <- t(outer(c(va1v1, va1v2, va1v3), c(va2v1, va2v2, va2v3),"*")) ## find all possible products
+        probability.matrix <- t(outer(c(va1p1, va1p2, va1p3), c(va2p1, va2p2, va2p3)))
+        unique.products <- unique(as.vector(product.matrix))  ## find the unique products
+        probability.vector <- rep(0, length(unique.products))
+        
+        for(i in 1:length(probability.vector)){
+          
+          z <- unique.products[i]
+          
+          indices <- which(as.vector(product.matrix) == z) ## find which elements of product.matrix match up to z
+          
+          probability.vector[i] <- sum(as.vector(probability.matrix)[indices]) ## sum their probabilities
+          
+        }
+        
+        rvMul <- RV(unique.products, probability.vector);
+        HTML(paste(paste(outcomes(rvMul), collapse = " || "), paste(probs(rvMul), collapse = " "), sep = "<br/>"))
+      }
+      else if(op == "div") {
+        rvSub <- rv1 / rv2;
+        HTML(paste(paste(outcomes(rvSub), collapse = " || "), paste(probs(rvSub), collapse = " "), sep = "<br/>"))
+      }
+    }
+    
+  })
+  
+  output$renderOp <- renderText({
+    if(input$operatie == "add") {" + "}
+    else if(input$operatie == "sub") {" - "}
+    else if(input$operatie == "mul") {" * "}
+    else if(input$operatie == "div") {" / "}
+    
   })
 }
 
