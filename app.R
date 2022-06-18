@@ -394,10 +394,26 @@ ui <- fluidPage(
                              fileInput("file", "Choose CSV File",accept = c(csv=','))
                            ),
                            mainPanel(
-                             textOutput("median"),
-                             textOutput("quantile"),
-                             plotOutput("boxplot"),
-                             plotOutput("hist")
+                             fluidRow(
+                               splitLayout(cellWidths = c("50%", "50%"),
+                                           h3("Mediana: ", style = "float: right"),
+                                           h3(textOutput("median"))
+                                          )
+                             ),
+                             fluidRow(
+                               splitLayout(cellWidths = c("50%", "50%"),
+                                           h3("Cuartile: ", style = "float: right"),
+                                           h3(textOutput("quantile"))
+                               )
+                             ),
+                             fluidRow(
+                               splitLayout(cellWidths = c("10%", "40%", "10%", "40%"),
+                                           h4("Box Plot: ", style = "float: right; margin-top: 75%"),
+                                           plotOutput("boxplot"),
+                                           h4("Histogram: ", style = "float: right; margin-top: 75%"),
+                                           plotOutput("hist")
+                               )
+                             )
                            )
              )
             )
