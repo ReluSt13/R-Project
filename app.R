@@ -387,6 +387,19 @@ ui <- fluidPage(
                              
                            )
                           )
+            ),
+    tabPanel("Set date",
+             sidebarLayout(position = "left",
+                           sidebarPanel(
+                             fileInput("file", "Choose CSV File",accept = c(csv=','))
+                           ),
+                           mainPanel(
+                             textOutput("median"),
+                             textOutput("quantile"),
+                             plotOutput("boxplot"),
+                             plotOutput("hist")
+                           )
+             )
             )
   )
   
@@ -643,6 +656,41 @@ server <- function(input, output) {
     else if(input$operatie == "div") {" / "}
     
   })
+  
+  output$median <- renderText({
+    req(input$file);
+    data <- read.csv(input$file$datapath,header = FALSE,sep = ",");
+    v <- c(sort(unlist(data)));
+    
+    if (length(v) %% 2 == 0)
+    {
+      median <- v[length(v)/2];
+    }
+    else
+    {
+      median <- (v[length(v)/2] + v[length(v)/2 + 1]) / 2;
+    }
+  })
+  output$quantile <- renderText({
+    req(input$file);
+    data <- read.csv(input$file$datapath,header = FALSE,sep = ",");
+    v <- c(sort(unlist(data)));
+    quantile(v);
+  })
+  
+  output$boxplot <- renderPlot({
+    req(input$file);
+    data <- read.csv(input$file$datapath,header = FALSE,sep = ",");
+    v <- c(sort(unlist(data)));
+    boxplot(v);
+  })
+  output$hist <- renderPlot({
+    req(input$file);
+    data <- read.csv(input$file$datapath,header = FALSE,sep = ",");
+    v <- c(sort(unlist(data)));
+    hist(v);
+  })
+  
 }
 
 # Run the application 
