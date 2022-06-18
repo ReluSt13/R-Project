@@ -262,128 +262,145 @@ ui <- fluidPage(
     tabPanel("Var. Aleatoare",
              sidebarLayout(position = "left",
                            sidebarPanel(
-                             h3("V.A. 1:", style = "margin: 0px; margin-bottom: 5px"),
-                             fluidRow(
-                                     div(style = "display: inline-block; margin-left: 40px",
-                                                numericInput("va1v1",
-                                                             "Val 1: ",
-                                                             value = 0,
-                                                             width = "75px")
-                                     ),
-                                     div(style = "display: inline-block; margin-left: 40px",
-                                         numericInput("va1v2",
-                                                      "Val 2: ",
-                                                      value = 0,
-                                                      width = "75px")
-                                     ),
-                                     div(style = "display: inline-block; margin-left: 40px",
-                                         numericInput("va1v3",
-                                                      "Val 3: ",
-                                                      value = 0,
-                                                      width = "75px")
-                                     )
-                            ),
-                            fluidRow(
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va1p1",
-                                               "Prob 1: ",
-                                               value = 0,
-                                               min = 0,
-                                               step = 0.1,
-                                               width = "75px")
-                              ),
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va1p2",
-                                               "Prob 2: ",
-                                               value = 0,
-                                               min = 0,
-                                               step = 0.1,
-                                               width = "75px")
-                              ),
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va1p3",
-                                               "Prob 3: ",
-                                               value = 0,
-                                               min = 0,
-                                               step = 0.1,
-                                               width = "75px")
-                              )
-                            ),
-                            fluidRow(
-                              column(12, align = "center",
-                                     radioButtons("operatie",
-                                                  "Alegeti operatia dorita:",
-                                                  c("+" = "add",
-                                                    "-" = "sub",
-                                                    "*" = "mul",
-                                                    "/" = "div"),
-                                                  inline = TRUE
-                                     )
-                              )
-                            ),
-                            h3("V.A. 2:", style = "margin: 0px; margin-bottom: 5px"),
-                            fluidRow(
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va2v1",
-                                               "Val 1: ",
-                                               value = 0,
-                                               width = "75px")
-                              ),
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va2v2",
-                                               "Val 2: ",
-                                               value = 0,
-                                               width = "75px")
-                              ),
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va2v3",
-                                               "Val 3: ",
-                                               value = 0,
-                                               width = "75px")
-                              )
-                            ),
-                            fluidRow(
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va2p1",
-                                               "Prob 1: ",
-                                               value = 0,
-                                               min = 0,
-                                               step = 0.1,
-                                               width = "75px")
-                              ),
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va2p2",
-                                               "Prob 2: ",
-                                               value = 0,
-                                               min = 0,
-                                               step = 0.1,
-                                               width = "75px")
-                              ),
-                              div(style = "display: inline-block; margin-left: 40px",
-                                  numericInput("va2p3",
-                                               "Prob 3: ",
-                                               value = 0,
-                                               min = 0,
-                                               step = 0.1,
-                                               width = "75px")
-                              )
-                            )
-                             
+                             selectInput("vaSelect", "Alegeti ce actiune doriti sa efectuati: ",
+                                         c("Afisati o variabila aleatoare" = "vaAfis",
+                                           "Operatii cu variabile aleatoare" = "vaOp")
+                             ),
+                             conditionalPanel(condition = "input.vaSelect == 'vaOp'",
+                                              h3("V.A. 1:", style = "margin: 0px; margin-bottom: 5px"),
+                                              fluidRow(
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va1v1",
+                                                                 "Val 1: ",
+                                                                 value = 0,
+                                                                 width = "75px")
+                                                ),
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va1v2",
+                                                                 "Val 2: ",
+                                                                 value = 0,
+                                                                 width = "75px")
+                                                ),
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va1v3",
+                                                                 "Val 3: ",
+                                                                 value = 0,
+                                                                 width = "75px")
+                                                )
+                                              ),
+                                              fluidRow(
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va1p1",
+                                                                 "Prob 1: ",
+                                                                 value = 0,
+                                                                 min = 0,
+                                                                 step = 0.1,
+                                                                 width = "75px")
+                                                ),
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va1p2",
+                                                                 "Prob 2: ",
+                                                                 value = 0,
+                                                                 min = 0,
+                                                                 step = 0.1,
+                                                                 width = "75px")
+                                                ),
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va1p3",
+                                                                 "Prob 3: ",
+                                                                 value = 0,
+                                                                 min = 0,
+                                                                 step = 0.1,
+                                                                 width = "75px")
+                                                )
+                                              ),
+                                              fluidRow(
+                                                column(12, align = "center",
+                                                       radioButtons("operatie",
+                                                                    "Alegeti operatia dorita:",
+                                                                    c("+" = "add",
+                                                                      "-" = "sub",
+                                                                      "*" = "mul",
+                                                                      "/" = "div"),
+                                                                    inline = TRUE
+                                                       )
+                                                )
+                                              ),
+                                              h3("V.A. 2:", style = "margin: 0px; margin-bottom: 5px"),
+                                              fluidRow(
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va2v1",
+                                                                 "Val 1: ",
+                                                                 value = 0,
+                                                                 width = "75px")
+                                                ),
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va2v2",
+                                                                 "Val 2: ",
+                                                                 value = 0,
+                                                                 width = "75px")
+                                                ),
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va2v3",
+                                                                 "Val 3: ",
+                                                                 value = 0,
+                                                                 width = "75px")
+                                                )
+                                              ),
+                                              fluidRow(
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va2p1",
+                                                                 "Prob 1: ",
+                                                                 value = 0,
+                                                                 min = 0,
+                                                                 step = 0.1,
+                                                                 width = "75px")
+                                                ),
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va2p2",
+                                                                 "Prob 2: ",
+                                                                 value = 0,
+                                                                 min = 0,
+                                                                 step = 0.1,
+                                                                 width = "75px")
+                                                ),
+                                                div(style = "display: inline-block; margin-left: 40px",
+                                                    numericInput("va2p3",
+                                                                 "Prob 3: ",
+                                                                 value = 0,
+                                                                 min = 0,
+                                                                 step = 0.1,
+                                                                 width = "75px")
+                                                )
+                                              )
+                                             ),
+                             conditionalPanel(condition = "input.vaSelect == 'vaAfis'",
+                                              numericInput("vaLambda", "Lambda",
+                                                           value = 2,
+                                                           min = 0)
+                                             )
 
                            ),
                            mainPanel(
-                             fluidRow(
-                               splitLayout(cellWidths = c("45%", "10%", "45%"),
-                                           h3("V.A. 1", style = "float: right"),
-                                           h3(textOutput("renderOp"), style = "text-align: center"),
-                                           h3("V.A. 2 = ")
-                                          )
-                             ),
-                             fluidRow(
-                               column(12, align = "center", 
-                                      h3(htmlOutput("outputVA"))
-                                      )
-                             )
+                             conditionalPanel(condition = "input.vaSelect == 'vaOp'",
+                                              fluidRow(
+                                                splitLayout(cellWidths = c("45%", "10%", "45%"),
+                                                            h3("V.A. 1", style = "float: right"),
+                                                            h3(textOutput("renderOp"), style = "text-align: center"),
+                                                            h3("V.A. 2 = ")
+                                                )
+                                              ),
+                                              fluidRow(
+                                                column(12, align = "center", 
+                                                       h3(htmlOutput("outputVA"))
+                                                )
+                                              )
+                                             ),
+                             conditionalPanel(condition = "input.vaSelect == 'vaAfis'",
+                                              htmlOutput("vaPoisAfis"),
+                                              plotOutput("vaPoisPlot")
+                                             )
+                             
                              
                            )
                           )
@@ -706,7 +723,14 @@ server <- function(input, output) {
     v <- c(sort(unlist(data)));
     hist(v);
   })
-  
+  output$vaPoisAfis <- renderUI({
+    rv <- RV("poisson", lambda = input$vaLambda);
+    HTML(paste(paste(outcomes(rv), collapse = " "), paste(probs(rv), collapse = " "), sep = "<br/>"))
+  })
+  output$vaPoisPlot <- renderPlot({
+    rv <- RV("poisson", lambda = input$vaLambda);
+    plot(rv);
+  })
 }
 
 # Run the application 
