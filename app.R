@@ -377,7 +377,8 @@ ui <- fluidPage(
                              conditionalPanel(condition = "input.vaSelect == 'vaAfis'",
                                               numericInput("vaLambda", "Lambda",
                                                            value = 2,
-                                                           min = 0)
+                                                           min = 0),
+                                              numericInput("vaFirst", "First value:", value = 0, min = 0)
                                              )
 
                            ),
@@ -755,11 +756,13 @@ server <- function(input, output) {
     hist(v);
   })
   output$vaPoisAfis <- renderUI({
-    rv <- RV("poisson", lambda = input$vaLambda);
+    pois.func <- function(x, lambda) { lambda^x * exp(-lambda) / factorial(x) }
+    rv <- RV(c(input$vaFirst, Inf), pois.func, lambda = input$vaLambda);
     HTML(paste(paste(outcomes(rv), collapse = " "), paste(probs(rv), collapse = " "), sep = "<br/>"))
   })
   output$vaPoisPlot <- renderPlot({
-    rv <- RV("poisson", lambda = input$vaLambda);
+    pois.func <- function(x, lambda) { lambda^x * exp(-lambda) / factorial(x) }
+    rv <- RV(c(input$vaFirst, Inf), pois.func, lambda = input$vaLambda);
     plot(rv);
   })
   output$commonTable <- renderTable({
