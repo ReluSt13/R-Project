@@ -433,6 +433,37 @@ ui <- fluidPage(
                              )
                            )
              )
+            ),
+    tabPanel("Repartitii comune",
+             sidebarLayout(position = "left",
+                           sidebarPanel(
+                             fluidRow(
+                               splitLayout(cellWidths = c("33.33%", "33.33%", "33.33%"),
+                                           column(12, align = "center", h4("A/B")),
+                                           numericInput("valB1", "VB1", value = 0, width = "75px"),
+                                           numericInput("valB2", "VB2", value = 0, width = "75px"),
+                                          )
+                             ),
+                             fluidRow(
+                               splitLayout(cellWidths = c("33.33%", "33.33%", "33.33%"),
+                                           numericInput("valA1", "VA1", value = 0, width = "75px"),
+                                           numericInput("probA1B1", "PA1B1", value = 0, min = 0, step = "0.1", width = "75px"),
+                                           numericInput("probA1B2", "PA1B2", value = 0, min = 0, step = "0.1", width = "75px"),
+                               )
+                             ),
+                             fluidRow(
+                               splitLayout(cellWidths = c("33.33%", "33.33%", "33.33%"),
+                                           numericInput("valA2", "VA2", value = 0, width = "75px"),
+                                           numericInput("probA2B1", "PA2B1", value = 0, min = 0, step = "0.1", width = "75px"),
+                                           numericInput("probA2B2", "PA2B2", value = 0, min = 0, step = "0.1", width = "75px"),
+                               )
+                             ),
+                           ),
+                           mainPanel(
+                             tableOutput("commonTable"),
+                             htmlOutput("informatii")
+                           )
+                           )
             )
   )
   
@@ -730,6 +761,67 @@ server <- function(input, output) {
   output$vaPoisPlot <- renderPlot({
     rv <- RV("poisson", lambda = input$vaLambda);
     plot(rv);
+  })
+  output$commonTable <- renderTable({
+    data.frame(c1 = c("A/B", input$valA1, input$valA2, "-"),
+               c2 = c(input$valB1, input$probA1B1, input$probA2B1, input$probA1B1 + input$probA2B1),
+               c3 = c(input$valB2, input$probA1B2, input$probA2B2, input$probA1B2 + input$probA2B2),
+               c4 = c("-", input$probA1B1 + input$probA1B2, input$probA2B1 + input$probA2B2, input$probA1B1 + input$probA2B1 + input$probA1B2 + input$probA2B2)
+              )
+  })
+  output$informatii <- renderUI({
+    if(input$probA1B1 + input$probA1B2 + input$probA2B1 + input$probA2B2 != 1) {"Suma probabilitatilor trebuie sa fie 1!"}
+    else{
+      vA1 = input$valA1;
+      vA2 = input$valA2;
+      vB1 = input$valB1;
+      vB2 = input$valB2;
+      pA1B1 = input$probA1B1;
+      pA1B2 = input$probA1B2;
+      pA2B1 = input$probA2B1;
+      pA2B2 = input$probA2B2;
+      jrv <- jointRV(outcomes = list(c(vA1, vA2), c(vB1, vB2)), probs = c(pA1B1, pA1B2, pA2B1, pA2B2));
+      A <- marginal(jrv, 1);
+      B <- marginal(jrv, 2);
+      
+      HTML(
+        "<div style='width: 100%'>",
+        "<div style='width:50%; float:left;'>",
+        "<h3>A:</h3>",
+        "<h3>",
+        paste(paste(outcomes(A), collapse = " "), paste(probs(A), collapse = " "), sep = "<br/>"),
+        "</h3>",
+        "<h3>B:</h3>",
+        "<h3>",
+        paste(paste(outcomes(B), collapse = " "), paste(probs(B), collapse = " "), sep = "<br/>"),
+        "</h3>",
+        "</div>",
+        "<div style='width:50%; float: right'>",
+        "<h3>",
+        paste("Medie A: ", E(A)),
+        "</h3>",
+        "<h3>",
+        paste("Varianta A: ", V(A)),
+        "</h3>",
+        "<h3>",
+        paste("Medie B: ", E(B)),
+        "</h3>",
+        "<h3>",
+        paste("Varianta B: ", V(B)),
+        "</h3>",
+        "<h3>",
+        paste("Covarianta(A, B): ", E(A * B) - (E(A) * E(B))),
+        "</h3>",
+        "<h3>",
+        paste("Coeficientul de corelatie (A, B): ", (E(A * B) - (E(A) * E(B))) / (sqrt(V(A)) * sqrt(V(B))) ),
+        "</h3>",
+        "</div>",
+        "</div>"
+        
+        
+        
+      )
+    }
   })
 }
 
