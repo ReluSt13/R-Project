@@ -829,10 +829,10 @@ server <- function(input, output) {
         paste("Varianta B: ", V(B)),
         "</h3>",
         "<h3>",
-        paste("Covarianta(A, B): ", E(A * B) - (E(A) * E(B))),
+        paste("Covarianta(A, B): ", E(A %AND% B) - (E(A) * E(B))),
         "</h3>",
         "<h3>",
-        paste("Coeficientul de corelatie (A, B): ", (E(A * B) - (E(A) * E(B))) / (sqrt(V(A)) * sqrt(V(B))) ),
+        paste("Coeficientul de corelatie (A, B): ", (E(A %AND% B) - (E(A) * E(B))) / (sqrt(V(A)) * sqrt(V(B))) ),
         "</h3>",
         "</div>",
         "</div>"
