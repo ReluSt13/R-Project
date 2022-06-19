@@ -707,7 +707,23 @@ server <- function(input, output) {
         HTML(paste(paste(outcomes(rvMul), collapse = " || "), paste(probs(rvMul), collapse = " "), sep = "<br/>"))
       }
       else if(op == "div") {
-        rvSub <- rv1 / rv2;
+        
+        division.matrix <- t(outer(c(va1v1, va1v2, va1v3), c(va2v1, va2v2, va2v3),"/")) ## find all possible divisions
+        probability.matrix <- t(outer(c(va1p1, va1p2, va1p3), c(va2p1, va2p2, va2p3)))
+        unique.divisions <- unique(as.vector(division.matrix))  ## find the unique divisions
+        probability.vector <- rep(0, length(unique.divisions))
+        
+        for(i in 1:length(probability.vector)){
+          
+          z <- unique.divisions[i]
+          
+          indices <- which(as.vector(division.matrix) == z) ## find which elements of division.matrix match up to z
+          
+          probability.vector[i] <- sum(as.vector(probability.matrix)[indices]) ## sum their probabilities
+          
+        }
+        
+        rvSub <- RV(unique.divisions, probability.vector);
         HTML(paste(paste(outcomes(rvSub), collapse = " || "), paste(probs(rvSub), collapse = " "), sep = "<br/>"))
       }
     }
