@@ -264,7 +264,8 @@ ui <- fluidPage(
                            sidebarPanel(
                              selectInput("vaSelect", "Alegeti ce actiune doriti sa efectuati: ",
                                          c("Afisati o variabila aleatoare" = "vaAfis",
-                                           "Operatii cu variabile aleatoare" = "vaOp")
+                                           "Operatii cu variabile aleatoare" = "vaOp",
+                                           "Transformare v.a. dupa functie" = "vaF")
                              ),
                              conditionalPanel(condition = "input.vaSelect == 'vaOp'",
                                               h3("V.A. 1:", style = "margin: 0px; margin-bottom: 5px"),
@@ -379,6 +380,9 @@ ui <- fluidPage(
                                                            value = 2,
                                                            min = 0),
                                               numericInput("vaFirst", "First value:", value = 0, min = 0)
+                                             ),
+                             conditionalPanel(condition = "input.vaSelect == 'vaF'",
+                                              textInput("vaFunc", "Introduceti o functie:")
                                              )
 
                            ),
@@ -400,6 +404,9 @@ ui <- fluidPage(
                              conditionalPanel(condition = "input.vaSelect == 'vaAfis'",
                                               htmlOutput("vaPoisAfis"),
                                               plotOutput("vaPoisPlot")
+                                             ),
+                             conditionalPanel(condition = "input.vaSelect == 'vaF'",
+                                              htmlOutput("vaTransform")
                                              )
                              
                              
@@ -836,11 +843,21 @@ server <- function(input, output) {
         "</h3>",
         "</div>",
         "</div>"
-        
-        
-        
+  
       )
     }
+  })
+  
+  output$vaTransform <- renderUI({
+    stringFunc <- input$vaFunc;
+    func <- function(X) {}
+    body(func) <- parse(text = stringFunc);
+    X <- RV(1:50);
+    HTML(
+      "<h3>",
+      func(X),
+      "</h3>"
+    )
   })
 }
 
