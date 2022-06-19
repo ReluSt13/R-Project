@@ -745,11 +745,11 @@ server <- function(input, output) {
     
     if (length(v) %% 2 == 0)
     {
-      median <- v[length(v)/2];
+      median <- (v[length(v)/2] + v[length(v)/2 + 1]) / 2;
     }
     else
     {
-      median <- (v[length(v)/2] + v[length(v)/2 + 1]) / 2;
+      median <- v[length(v)/2 + 1];
     }
   })
   output$quantile <- renderText({
